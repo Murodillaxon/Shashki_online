@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import { message } from 'antd';
 
 // Укажите ваш адрес сервера
-const SOCKET_URL = 'http://192.168.1.9:3001';
+const SOCKET_URL = 'https://shashkaback-production.up.railway.app';
 
 const SocketContext = createContext();
 

@@ -15,6 +15,7 @@ export default function MenuPage() {
 
     const handleJoin = (id) => {
         joinLobby({ lobbyId: id, playerName: nickname });
+        navigate('/game');
     };
 
 
@@ -31,7 +32,7 @@ export default function MenuPage() {
                 </Col>
 
                 <Col xs={24} md={16}>
-                    <Card  title="Список активных игр">
+                    <Card title="Список активных игр">
                         <List
                             dataSource={lobbies}
                             locale={{ emptyText: 'Нет активных игр' }}
