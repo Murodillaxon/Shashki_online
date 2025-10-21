@@ -1,5 +1,6 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+// client/src/App.jsx
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Layout } from 'antd';
 import 'antd/dist/reset.css';
 
@@ -14,14 +15,29 @@ import HeaderActions from './components/HeaderActions';
 
 const { Header, Content } = Layout;
 
-
 export default function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const nick = localStorage.getItem('checkers_nickname');
+    if (!nick) navigate('/login');
+    // если ник есть — остаёмся на текущей странице
+  }, [navigate]);
+
   return (
     <SocketProvider>
       <Layout style={{ minHeight: '100vh' }}>
         <Header style={{ background: '#fff', padding: '0 16px' }}>
-          <div style={{ fontSize: 18, fontWeight: 600,display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>  🎮 Онлайн Шашки <HeaderActions /></div>
-          
+          <div style={{
+            fontSize: 18,
+            fontWeight: 600,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            🎮 Онлайн Шашки
+            <HeaderActions />
+          </div>
         </Header>
 
         <Content style={{ padding: 16 }}>
@@ -35,6 +51,9 @@ export default function App() {
           </Routes>
         </Content>
       </Layout>
+
+      {/* Mobile drawer — компонент можно показать/скрыть внутри него при необходимости */}
+      <MobileDrawer />
     </SocketProvider>
   );
 }

@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import { message } from 'antd';
 
 // Укажите ваш адрес сервера
-const SOCKET_URL = 'https://shashkaback-production.up.railway.app';
+const SOCKET_URL =  'http://localhost:3001';
 
 const SocketContext = createContext();
 
@@ -19,6 +19,8 @@ export const SocketProvider = ({ children }) => {
     // Подключаемся при монтировании провайдера
     const s = io(SOCKET_URL, { transports: ['websocket'] });
     socketRef.current = s;
+    // делаем сокет глобально доступным для простого обращения из LoginPage (можно убрать, если не нравится)
+    window.globalSocket = s;
 
     s.on('connect', () => {
       setConnected(true);
@@ -52,8 +54,6 @@ export const SocketProvider = ({ children }) => {
     });
 
     s.on('move_accepted', (data) => {
-      // кто угодно — страницу, использующую currentLobby и board, должен отслеживать move_accepted
-      // мы просто пересылаем событие через глобальный state (currentLobby.gameState можно обновить)
       setCurrentLobby(prev => prev ? { ...prev, gameState: { board: data.board, turn: data.turn, winner: data.winner } } : prev);
     });
 
@@ -64,10 +64,20 @@ export const SocketProvider = ({ children }) => {
 
     s.on('lobby_expired', (data) => {
       message.info(data.message || 'Лобби истекло');
-      // обновления списка придут от сервера
       if (currentLobby && currentLobby.id === data.lobbyId) {
         setCurrentLobby(null);
       }
+    });
+
+    // Никнейм события
+    s.on('nickname_registered', (data) => {
+      if (data && data.success) {
+        message.success(`Ник зарегистрирован: ${data.nickname}`);
+      }
+    });
+
+    s.on('nickname_error', (err) => {
+      if (err && err.message) message.error(err.message);
     });
 
     s.on('error', (err) => {
@@ -78,6 +88,7 @@ export const SocketProvider = ({ children }) => {
       if (socketRef.current) {
         socketRef.current.close();
         socketRef.current = null;
+        window.globalSocket = null;
       }
     };
   }, []);
@@ -93,6 +104,7 @@ export const SocketProvider = ({ children }) => {
     leaveLobby: (payload) => socketRef.current && socketRef.current.emit('leave_lobby', payload),
     makeMove: (payload) => socketRef.current && socketRef.current.emit('make_move', payload),
     requestLobbies: () => socketRef.current && socketRef.current.emit('list_lobbies'),
+    registerNickname: (nickname) => socketRef.current && socketRef.current.emit('register_nickname', { nickname }),
     setCurrentLobby, // allow pages to set
   };
 

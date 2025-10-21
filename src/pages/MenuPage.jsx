@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { useSocket } from '../contexts/SocketContext';
 import HeaderActions from '../components/HeaderActions';
+import onlinePlayers from './OnlinePlayers';
+import OnlinePlayers from './OnlinePlayers';
 
 const { Title, Text } = Typography;
 
@@ -43,6 +45,9 @@ export default function MenuPage() {
                             )}
                         />
                     </Card>
+                </Col>
+                <Col  xs={24} md={16} >
+                    <OnlinePlayers />
                 </Col>
             </Row>
         </div>
