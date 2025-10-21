@@ -5,7 +5,7 @@ import { useSocket } from '../contexts/SocketContext'; // путь поправ�
 const { Text } = Typography;
 
 // Укажи URL сервера (тот же, что в SocketProvider / server)
-const SERVER_URL = 'http://localhost:3001' || 'https://shashkaback-production.up.railway.app';
+const SERVER_URL = 'https://shashkaback-production.up.railway.app';
 
 export default function OnlinePlayers({ autoRefresh = true, refreshInterval = 5000 }) {
     const socketApi = useSocket(); // опционально: может быть undefined, если провайдера нет
